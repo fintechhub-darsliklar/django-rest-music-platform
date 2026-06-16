@@ -12,6 +12,8 @@ class CustomPagination(PageNumberPagination):
             'count': self.page.paginator.count,
             'pages': math.ceil(self.page.paginator.count / self.page.paginator.per_page),
             **kwargs,
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
             'results': data,
         })
 
