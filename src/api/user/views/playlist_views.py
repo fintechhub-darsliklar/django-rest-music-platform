@@ -1,21 +1,23 @@
 from rest_framework.generics import ListAPIView,\
     CreateAPIView, UpdateAPIView, DestroyAPIView, RetrieveAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from api.user.serializers import playlist_seralizers
 from rest_framework import status
 from rest_framework.response import Response
 from apps.music.models import Playlist
+from django.contrib.auth.models import AnonymousUser
+
 
 
 class PlaylistListApiView(ListAPIView):
     queryset = Playlist.objects.filter(is_public=True)
     serializer_class = playlist_seralizers.PlaylistListSeralizer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     is_mine = None
     
     def get_queryset(self):
         queryset = super().get_queryset()
-        if self.is_mine:
+        if self.is_mine and type(self.request.user) != AnonymousUser:
             queryset = Playlist.objects.filter(author=self.request.user)
         return queryset
 
@@ -32,6 +34,7 @@ class PlaylistCreateAPIView(CreateAPIView):
 
     def create(self, request):
         data = request.data
+        data._mutable = True
         data['author'] = request.user.id
         ser = self.serializer_class(data=data)
         if ser.is_valid(raise_exception=True):
@@ -53,6 +56,7 @@ class PlaylistUpdateAPIView(UpdateAPIView):
         except: pass
         instance = self.get_object()
         if request.user == instance.author:
+            request.data._mutable = True
             request.data['author'] = request.user.id
             ser = self.serializer_class(instance, data=request.data)
             if ser.is_valid(raise_exception=True):
@@ -70,11 +74,11 @@ class PlaylistUpdateAPIView(UpdateAPIView):
 class PlaylistRetrieveAPIView(RetrieveAPIView):
     queryset = Playlist.objects.all()
     serializer_class = playlist_seralizers.PlaylistListSeralizer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        if request.user == instance.author:
+        if type(self.request.user) != AnonymousUser and self.request.user == instance.author:
             return super().retrieve(request, *args, **kwargs)
         elif instance.is_public:
             return super().retrieve(request, *args, **kwargs)

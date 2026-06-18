@@ -24,6 +24,7 @@ class FavouriteplaylistCreateAPIView(CreateAPIView):
     def create(self, request):
         data = request.data
         data['user'] = request.user.id
+        data._mutable = True
         ser = self.serializer_class(data=data)
         ser.user = request.user
         if ser.is_valid(raise_exception=True):
