@@ -9,12 +9,20 @@ from mutagen.wave import WAVE
 class Playlist(models.Model):
     name = models.CharField(max_length=255)
     author = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    picture = models.ImageField(upload_to='pictures/', blank=True, null=True)
     is_public = models.BooleanField(default=False)
     saves_count = models.IntegerField(default=0)
     musics_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.name}"
+    
+    def delete(self, *args, **kwargs):
+        if self.picture and os.path.isfile(self.picture.path):
+            os.remove(self.picture.path)
+            
+        # 3. Asosiy o'chirish jarayonini bajarish
+        super().delete(*args, **kwargs)
     
 
 class Music(models.Model):
