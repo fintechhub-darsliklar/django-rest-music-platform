@@ -59,7 +59,8 @@ class PlaylistUpdateAPIView(UpdateAPIView):
         except: pass
         instance = self.get_object()
         if request.user == instance.author:
-            request.data._mutable = True
+            data = request.data
+            data._mutable = True
             request.data['author'] = request.user.id
             ser = self.serializer_class(instance, data=request.data)
             if ser.is_valid(raise_exception=True):
