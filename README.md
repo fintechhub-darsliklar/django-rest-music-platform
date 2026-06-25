@@ -1,26 +1,23 @@
 # django-rest-music-platfor
 
-
-
 Pgainations
-
+Docs: swagger, ApiSchema
 Permissions (custom)
 Filtering
 Django filter
 Ordering fields
-Throotling
-AnonRateThrottle⁠, ⁠UserRateThrottle⁠
-Cacheing
-Docs: swagger
-Celery
 ngrok
 
-Testing
-ApiSchema
 
+Cacheing
+Throotling
+AnonRateThrottle⁠, ⁠UserRateThrottle⁠
+Celery
+
+Testing
 Docker
 Elastic search
-
+CI/CD
 
 domain
 cloudfare

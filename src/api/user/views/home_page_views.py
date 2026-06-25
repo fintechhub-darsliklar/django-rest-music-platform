@@ -6,6 +6,32 @@ from api.user.serializers import playlist_seralizers
 from rest_framework import status
 from rest_framework.response import Response
 from apps.music.models import Music, Playlist
+from rest_framework.viewsets import ModelViewSet
+from api.user.permissions import CustomPermissions
+from api.user.filters import MusicFilter
+from django_filters.rest_framework import DjangoFilterBackend
+
+
+
+
+class TestApiViewset(ModelViewSet):
+    serializer_class = music_seralizers.MusicListSeralizer
+    queryset = Music.objects.all()
+    permission_classes = [IsAuthenticated, CustomPermissions]
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = MusicFilter
+    search_fields = ['name', 'author']  
+    ordering_fields = ['duration']
+    
+    app_label = "music"
+    app_model = "music"
+    # Create (POST), Update (PUT, PATCH), Delete (DELETE), List (GET), Detail (GET)
+
+    def list(self, request, *args, **kwargs):
+        
+        return super().list(request, *args, **kwargs)
+
+
 
 
 class HomeTopMusicListApiView(ListAPIView):
@@ -27,3 +53,4 @@ class HomeTopPlaylistListApiView(ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()[:5]
         return queryset
+

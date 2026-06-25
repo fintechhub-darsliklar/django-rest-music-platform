@@ -1,11 +1,15 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from api.user.views import music_views, playlist_views, favourite_music, favourite_playlist_views
+from api.user.views import music_views, playlist_views, favourite_music, \
+    favourite_playlist_views, home_page_views
 
 router = DefaultRouter()
 router.include_root_view = False
-
+router.register(r"music-test", home_page_views.TestApiViewset, basename="music-test")
+ 
 urlpatterns = [
+    path('', include(router.urls)),
+
     # music
     path('music/', music_views.MusicListApiView.as_view()),
     path('music/create/', music_views.MusicCreateAPIView.as_view()),
@@ -31,6 +35,5 @@ urlpatterns = [
     path('favourite-playlist/delete/<int:pk>/', favourite_playlist_views.FavouriteplaylistDestroyAPIView.as_view()),
 
 
-    # path('', include(router.urls)),
     # path('restaurant/', RestaurantViewset.as_view({'get': 'list','post':'create'}), name='restaurant-detail'),
 ]
